@@ -1,0 +1,435 @@
+/* ==========================================================================
+   1. Global Variables
+   ========================================================================== */
+
+:root {
+    --bg-popup: rgba(0, 0, 0, 0.9);
+    --bg-btn: rgba(255, 255, 255, 0.2);
+    --bg-btn-hover: rgba(255, 255, 255, 0.4);
+
+    --text-light: white;
+
+    --border-light: 1px solid rgba(255, 255, 255, 0.3);
+    --border-btn: 1px solid rgba(255, 255, 255, 0.5);
+
+    --radius-container: 15px;
+    --radius-btn: 5px;
+}
+
+/* ==========================================================================
+   2. Help popup
+   ========================================================================== */
+
+/* Height capped so the help text scrolls and the language row and Close button
+   stay inside the frame; toggleHelp() shows it as flex. */
+#help-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 600px;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+    box-sizing: border-box;
+    flex-direction: column;
+    background-color: var(--bg-popup);
+    border: var(--border-light);
+    border-radius: var(--radius-container);
+    color: var(--text-light);
+    padding: 30px;
+    text-align: center;
+    z-index: 30;
+}
+
+.language-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.help-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    margin: 20px 0;
+    line-height: 1.6;
+}
+
+.lang-button,
+.close-button {
+    background-color: var(--bg-btn);
+    border: var(--border-btn);
+    border-radius: var(--radius-btn);
+    color: var(--text-light);
+    cursor: pointer;
+    text-align: center;
+}
+
+.close-button:hover,
+.lang-button.active {
+    background-color: var(--bg-btn-hover);
+}
+
+.lang-button {
+    padding: 8px 15px;
+}
+
+.close-button {
+    flex: 0 0 auto;
+    align-self: center;
+    padding: 8px 20px;
+    margin-top: 20px;
+}
+
+.help-image {
+    max-width: 150px;
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
+.help-text {
+    display: none;
+}
+
+.help-text.active {
+    display: block;
+}
+
+@media screen and (max-width: 600px) {
+    #help-popup {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .help-content {
+        margin: 12px 0;
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .close-button {
+        margin-top: 4px;
+    }
+
+    .help-image {
+        max-width: 50px;
+    }
+}
+
+/* ==========================================================================
+   3. Overlay controls: built by buildUi() in overlay.js
+   ========================================================================== */
+
+/* Cinematic visit running: indigo accent. */
+.cinematic-button.active {
+    border-color: #6366f1;
+    background-color: rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.6);
+}
+
+/* Same glass as #map-button so the three top controls read as one set. */
+.ovg-btn,
+#ovg-made-with,
+#ovg-volume-pop,
+#ovg-sheet {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #d4d4d8;
+    font-family: 'Inter', sans-serif;
+}
+
+.ovg-btn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ovg-btn:hover {
+    color: #fafafa;
+    border-color: rgba(165, 180, 252, 0.5);
+}
+
+.ovg-btn svg {
+    display: block;
+}
+
+#ovg-made-with {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 0 16px 0 12px;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+#ovg-made-with:hover {
+    color: #fafafa;
+}
+
+#ovg-made-with svg {
+    width: 20px;
+    height: 20px;
+}
+
+#ovg-controls {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 25;
+    display: flex;
+    gap: 8px;
+}
+
+#ovg-volume {
+    position: relative;
+    display: none;
+}
+
+body.has-music #ovg-volume {
+    display: block;
+}
+
+#ovg-volume-btn .vol-off,
+#ovg-volume-btn.off .vol-on {
+    display: none;
+}
+
+#ovg-volume-btn.off .vol-off {
+    display: inline;
+}
+
+/* Vertical slider: a horizontal range rotated -90deg, so the left (mute) end
+   sits at the bottom. Rotation is used over writing-mode for older Safari. */
+#ovg-volume-pop {
+    display: none;
+    position: absolute;
+    bottom: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 140px;
+    box-sizing: border-box;
+    border-radius: 22px;
+}
+
+#ovg-volume.open #ovg-volume-pop {
+    display: block;
+}
+
+#ovg-volume-range {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 110px;
+    margin: 0;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    accent-color: #818cf8;
+    cursor: pointer;
+}
+
+/* Artwork sheet: bottom third, modal. Desktop keeps the old bar's footprint. */
+#ovg-sheet-backdrop,
+#ovg-sheet {
+    display: none;
+}
+
+body.ovg-sheet-open #ovg-sheet-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+body.ovg-sheet-open #ovg-sheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    /* Desktop: right-side panel; the artwork stays visible in the centre. */
+    top: 20px;
+    right: 20px;
+    bottom: 20px;
+    width: 440px;
+    max-width: calc(100% - 40px);
+    box-sizing: border-box;
+    padding: 12px;
+    border-radius: 15px;
+    z-index: 41;
+}
+
+/* Close floats over the body's top-right so the title starts at the top. */
+#ovg-sheet-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+#ovg-sheet-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+#ovg-sheet-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 14px 12px 8px;
+}
+
+#ovg-sheet-title {
+    margin: 0;
+    padding-right: 48px;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: #fafafa;
+    overflow-wrap: anywhere;
+}
+
+#ovg-sheet-subtitle {
+    margin: 6px 0 0;
+    padding-right: 48px;
+    font-size: 15px;
+    line-height: 1.45;
+    color: #a1a1aa;
+}
+
+#ovg-sheet-fields {
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ovg-sheet-field {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ovg-sheet-field:last-child {
+    border-bottom: none;
+}
+
+.ovg-sheet-field h3 {
+    margin: 0 0 4px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #71717a;
+}
+
+.ovg-sheet-field p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: #d4d4d8;
+    font-variant-numeric: tabular-nums;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* Desktop: top trio and bottom row grouped at the centre. The badge gets a fixed
+   width so the map and record buttons can sit either side of it. Record button
+   styles are inline (tour-recorder.js), hence !important. Its top is reset too:
+   the generator preview pushes it down to clear Close Preview (top-right), which
+   only matters on phones, where it still sits in that corner. */
+@media screen and (min-width: 601px) {
+    #ovg-made-with {
+        width: 190px;
+        justify-content: center;
+    }
+
+    body #map-button {
+        left: auto;
+        right: calc(50% + 103px);
+    }
+
+    body #tour-record-btn {
+        top: 20px !important;
+        left: calc(50% + 103px) !important;
+        right: auto !important;
+    }
+
+    /* Raised so its middle lines up with the joystick's (120px ring at bottom 16). */
+    #ovg-controls {
+        right: auto;
+        left: 50%;
+        bottom: 54px;
+        transform: translateX(-50%);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .ovg-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    /* Row + joystick (100px ring, 20px gap) centred as one group; the row is raised
+       so its middle lines up with the ring's (ring bottom 12). */
+    #ovg-controls {
+        right: auto;
+        left: 50%;
+        bottom: 43px;
+        transform: translateX(calc(-50% - 60px));
+    }
+
+    #ovg-made-with {
+        top: 12px;
+        height: 38px;
+        padding: 0 6px;
+    }
+
+    /* Icon only: the words would collide with the record button. */
+    #ovg-made-with span {
+        display: none;
+    }
+
+    #ovg-made-with svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    #ovg-volume-pop {
+        width: 38px;
+        bottom: 46px;
+    }
+
+    body.ovg-sheet-open #ovg-sheet {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: none;
+        height: 33vh;
+        height: 33dvh;
+        border-radius: 15px 15px 0 0;
+        border-bottom: none;
+    }
+}
