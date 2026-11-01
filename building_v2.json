@@ -128,7 +128,7 @@
     },
     "parent": "none",
     "resource": "Reclaiming our home: Urban transitions in Africa.glb",
-    "template": "T_nopannels_warm_B.glb"
+    "template": "T_nopannels_B.glb"
   },
   "Technical": {
     "ambientLight": 0.5,
